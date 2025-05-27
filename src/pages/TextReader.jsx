@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
+
 import ApperIcon from '../components/ApperIcon'
 
 const TextReader = () => {
+  const location = useLocation()
+
   const [selectedBook, setSelectedBook] = useState(null)
   const [chapters, setChapters] = useState([])
   const [currentChapter, setCurrentChapter] = useState(0)
@@ -100,6 +104,38 @@ As we continue to advance AI technologies, it is essential that we maintain huma
       ]
     }
   ]
+
+
+  useEffect(() => {
+    // Check if a document was passed from Library
+    if (location.state?.document) {
+      const document = location.state.document
+      
+      // Convert document content to chapters if it's a single document
+      const documentChapters = [
+        {
+          title: document.title,
+          content: document.content
+        }
+      ]
+      
+      const documentBook = {
+        id: document.id,
+        title: document.title,
+        author: document.author,
+        chapters: documentChapters
+      }
+      
+      setSelectedBook(documentBook)
+      setChapters(documentChapters)
+      setCurrentChapter(0)
+      
+      toast.success(`Opened: ${document.title}`, {
+        position: "top-right",
+        autoClose: 2000,
+      })
+    }
+  }, [location.state])
 
   useEffect(() => {
     // Initialize with first book

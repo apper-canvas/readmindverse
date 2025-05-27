@@ -2,6 +2,10 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { Document, Page, pdfjs } from 'react-pdf'
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import 'react-pdf/dist/esm/Page/TextLayer.css'
+
 import ApperIcon from '../components/ApperIcon'
 
 const Library = () => {
@@ -19,6 +23,10 @@ const Library = () => {
   const [textInput, setTextInput] = useState('')
   const [editingDocument, setEditingDocument] = useState(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null)
+
+  // Configure PDF.js worker
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
+
 
   // Sample documents for demonstration
   const sampleDocuments = [
@@ -114,14 +122,34 @@ const Library = () => {
           content = await file.text()
           wordCount = content.split(/\s+/).length
         } else if (file.type === 'application/pdf') {
-          // Simulate PDF text extraction
-          content = `This is extracted text content from the PDF file: ${file.name}. In a real implementation, this would use a PDF parsing library to extract the actual text content from the uploaded PDF file. The content would then be processed and stored for reading within the application.`
-          wordCount = content.split(/\s+/).length
-        } else {
-          // Simulate DOCX processing
-          content = `This is extracted text content from the Word document: ${file.name}. In a real implementation, this would use a document parsing library to extract the actual text content from the uploaded Word file.`
-          wordCount = content.split(/\s+/).length
-        }
+          // Process PDF file using react-pdf
+          try {
+            const arrayBuffer = await file.arrayBuffer()
+            const pdfText = await extractTextFromPDF(arrayBuffer)
+            
+            if (!pdfText || pdfText.trim().length === 0) {
+              toast.error(`No readable text found in PDF: ${file.name}`, {
+                position: "top-right",
+                autoClose: 4000,
+              })
+              continue
+            }
+            
+            content = pdfText
+            wordCount = content.split(/\s+/).filter(word => word.length > 0).length
+            
+            toast.success(`Successfully extracted ${wordCount} words from PDF`, {
+              position: "top-right",
+              autoClose: 3000,
+            })
+          } catch (pdfError) {
+            toast.error(`Failed to process PDF: ${file.name}. ${pdfError.message}`, {
+              position: "top-right",
+              autoClose: 4000,
+            })
+            continue
+          }
+
         
         const newDocument = {
           id: Date.now().toString() + Math.random(),
@@ -155,6 +183,38 @@ const Library = () => {
       setShowImportModal(false)
     }
   }
+
+  // PDF text extraction function
+  const extractTextFromPDF = async (arrayBuffer) => {
+    try {
+      const loadingTask = pdfjs.getDocument({ data: arrayBuffer })
+      const pdf = await loadingTask.promise
+      let fullText = ''
+      
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        try {
+          const page = await pdf.getPage(pageNum)
+          const textContent = await page.getTextContent()
+          const pageText = textContent.items
+            .filter(item => item.str && item.str.trim().length > 0)
+            .map(item => item.str)
+            .join(' ')
+          
+          if (pageText.trim()) {
+            fullText += pageText + '\n\n'
+          }
+        } catch (pageError) {
+          console.warn(`Error processing page ${pageNum}:`, pageError)
+          // Continue with other pages even if one fails
+        }
+      }
+      
+      return fullText.trim()
+    } catch (error) {
+      throw new Error(`PDF processing failed: ${error.message}`)
+    }
+  }
+
 
   const handleUrlImport = async () => {
     if (!urlInput.trim()) {
