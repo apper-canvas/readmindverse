@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
@@ -7,6 +8,8 @@ import ApperIcon from '../components/ApperIcon'
 
 
 const Home = () => {
+  const navigate = useNavigate()
+
   const [darkMode, setDarkMode] = useState(false)
 
   const toggleDarkMode = () => {
