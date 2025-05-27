@@ -150,7 +150,6 @@ const Home = () => {
         </div>
       </section>
 
-      </nav>
 
       {/* Hero Section */}
       <section className="relative pt-16 pb-20 md:pt-24 md:pb-32 overflow-hidden">
