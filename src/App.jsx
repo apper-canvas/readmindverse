@@ -5,6 +5,8 @@ import TextReader from './pages/TextReader'
 
 import Home from './pages/Home'
 import Profile from './pages/Profile'
+import Library from './pages/Library'
+
 import ReadingGoals from './pages/ReadingGoals'
 
 import NotFound from './pages/NotFound'
@@ -18,6 +20,8 @@ function App() {
         <Route path="/text-reader" element={<TextReader />} />
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/library" element={<Library />} />
+
           <Route path="/reading-goals" element={<ReadingGoals />} />
 
         </Routes>

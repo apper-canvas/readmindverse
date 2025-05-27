@@ -85,6 +85,25 @@ const Home = () => {
         </div>
       </nav>
 
+            {/* Import & Save Articles */}
+            <motion.div
+              className="group p-6 bg-white/80 dark:bg-surface-800/80 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-surface-700/20 hover:shadow-lg transition-all duration-300 cursor-pointer"
+              whileHover={{ scale: 1.02, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/library')}
+            >
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <ApperIcon name="FileText" className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-surface-800 dark:text-surface-100 mb-2">
+                Import & Save
+              </h3>
+              <p className="text-surface-600 dark:text-surface-300 text-sm leading-relaxed">
+                Import articles, PDFs, and documents to build your personal reading library.
+              </p>
+            </motion.div>
+
+
       {/* Quick Access Features */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

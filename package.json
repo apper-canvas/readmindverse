@@ -19,6 +19,9 @@
     "apexcharts": "^3.44.0",
     "react-apexcharts": "^1.4.1",
     "date-fns": "^2.30.0",
+    "pdf-parse": "^1.1.1",
+    "mammoth": "^1.6.0",
+
 
     "@reduxjs/toolkit": "2.7.0"
   },
