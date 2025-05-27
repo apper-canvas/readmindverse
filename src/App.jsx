@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
+import Profile from './pages/Profile'
+import ReadingGoals from './pages/ReadingGoals'
+
 import NotFound from './pages/NotFound'
 
 function App() {
@@ -10,7 +13,9 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/reading-goals" element={<ReadingGoals />} />
+
         </Routes>
         <ToastContainer
           position="top-right"
