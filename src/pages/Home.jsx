@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { toast } from 'react-toastify'
 import MainFeature from '../components/MainFeature'
 import ApperIcon from '../components/ApperIcon'
+
 
 const Home = () => {
   const [darkMode, setDarkMode] = useState(false)
@@ -43,49 +44,111 @@ const Home = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <motion.div 
-          {[
-            { icon: 'BookOpen', title: 'Reading Goals', desc: 'Set and track reading targets', href: '/reading-goals' },
-            { icon: 'User', title: 'Profile', desc: 'Manage your reading profile', href: '/profile' },
-            { icon: 'Brain', title: 'AI Text Reader', desc: 'Interactive reading with AI summaries', href: '/text-reader' },
-            { icon: 'Target', title: 'Comprehension', desc: 'Test your understanding', href: '#' },
-            { icon: 'BookA', title: 'Vocabulary', desc: 'Build your word knowledge', href: '#' },
-            { icon: 'TrendingUp', title: 'Progress', desc: 'Track your improvements', href: '#' }
-          ].map((feature, index) => (
-            <motion.div
-              key={index}
-              className="group p-6 bg-white/60 dark:bg-surface-800/60 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-surface-700/20 hover:shadow-card transition-all duration-300"
-              whileHover={{ scale: 1.02, y: -4 }}
-              transition={{ duration: 0.2 }}
+              className="flex items-center space-x-3"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <Link 
-                to={feature.href}
-                className="block"
-                onClick={() => {
-                  if (feature.href !== '#') {
-                    toast.success(`Opening ${feature.title}...`, {
-                      position: "top-right",
-                      autoClose: 1500,
-                    })
-                  } else {
-                    toast.info(`${feature.title} coming soon!`, {
-                      position: "top-right",
-                      autoClose: 2000,
-                    })
-                  }
-                }}
-              >
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <ApperIcon name={feature.icon} className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-surface-800 dark:text-surface-100 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-surface-600 dark:text-surface-300">
-                  {feature.desc}
-                </p>
-              </Link>
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                <ApperIcon name="BookOpen" className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gradient">ReadMind</span>
             </motion.div>
-          ))}
+            
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/reading-goals" className="text-surface-700 dark:text-surface-300 hover:text-primary transition-colors duration-200">
+                Reading Goals
+              </Link>
+              <Link to="/profile" className="text-surface-700 dark:text-surface-300 hover:text-primary transition-colors duration-200">
+                Profile
+              </Link>
+              <Link to="/text-reader" className="text-surface-700 dark:text-surface-300 hover:text-primary transition-colors duration-200">
+                AI Reader
+              </Link>
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200"
+              >
+                <ApperIcon 
+                  name={darkMode ? 'Sun' : 'Moon'} 
+                  className="w-5 h-5 text-surface-700 dark:text-surface-300" 
+                />
+              </button>
+            </div>
+            
+            <div className="md:hidden">
+              <button className="p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                <ApperIcon name="Menu" className="w-6 h-6 text-surface-700 dark:text-surface-300" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Quick Access Features */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-surface-800 dark:text-surface-100 mb-4">
+              Quick Access
+            </h2>
+            <p className="text-surface-600 dark:text-surface-300">
+              Jump into your reading journey with these powerful tools
+            </p>
+          </motion.div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: 'BookOpen', title: 'Reading Goals', desc: 'Set and track reading targets', href: '/reading-goals' },
+              { icon: 'User', title: 'Profile', desc: 'Manage your reading profile', href: '/profile' },
+              { icon: 'Brain', title: 'AI Text Reader', desc: 'Interactive reading with AI summaries', href: '/text-reader' },
+              { icon: 'Target', title: 'Comprehension', desc: 'Test your understanding', href: '#' },
+              { icon: 'BookA', title: 'Vocabulary', desc: 'Build your word knowledge', href: '#' },
+              { icon: 'TrendingUp', title: 'Progress', desc: 'Track your improvements', href: '#' }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="group p-6 bg-white/60 dark:bg-surface-800/60 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-surface-700/20 hover:shadow-card transition-all duration-300"
+                whileHover={{ scale: 1.02, y: -4 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Link 
+                  to={feature.href}
+                  className="block"
+                  onClick={() => {
+                    if (feature.href !== '#') {
+                      toast.success(`Opening ${feature.title}...`, {
+                        position: "top-right",
+                        autoClose: 1500,
+                      })
+                    } else {
+                      toast.info(`${feature.title} coming soon!`, {
+                        position: "top-right",
+                        autoClose: 2000,
+                      })
+                    }
+                  }}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <ApperIcon name={feature.icon} className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-surface-800 dark:text-surface-100 mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-surface-600 dark:text-surface-300">
+                    {feature.desc}
+                  </p>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       </nav>
 
