@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom'
+
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
 import ApperIcon from './ApperIcon'
 
 const MainFeature = () => {
+  const navigate = useNavigate()
+
   const [selectedText, setSelectedText] = useState('')
   const [aiAnalysis, setAiAnalysis] = useState(null)
   const [readingProgress, setReadingProgress] = useState(0)
@@ -500,6 +504,20 @@ Furthermore, the sophisticated algorithms employed in modern reading assistance 
             </div>
           </motion.div>
         )}
+
+      {/* Floating AI Q&A Button */}
+      <motion.button
+        onClick={() => navigate('/ask-questions')}
+        className="fixed bottom-6 left-6 w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0, x: -20 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
+      >
+        <ApperIcon name="Brain" className="w-6 h-6" />
+      </motion.button>
+
       </AnimatePresence>
     </div>
   )

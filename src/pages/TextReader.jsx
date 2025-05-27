@@ -22,6 +22,10 @@ const TextReader = () => {
   const [readingProgress, setReadingProgress] = useState(0)
   const [showSummaryPanel, setShowSummaryPanel] = useState(true)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [showQuestionModal, setShowQuestionModal] = useState(false)
+  const [questionText, setQuestionText] = useState('')
+  const [isAskingQuestion, setIsAskingQuestion] = useState(false)
+
   
   const textRef = useRef(null)
   const summaryRef = useRef(null)
@@ -350,6 +354,62 @@ As we continue to advance AI technologies, it is essential that we maintain huma
     
     // Generate new summary
     await generateChapterSummary(currentChapter)
+
+  const handleAskQuestion = async () => {
+    if (!questionText.trim()) {
+      toast.warning('Please enter a question')
+      return
+    }
+
+    setIsAskingQuestion(true)
+    
+    try {
+      // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      const contextInfo = `Based on Chapter ${currentChapter + 1}: "${chapters[currentChapter]?.title}" from "${selectedBook.title}"`
+      
+      // Generate contextual response
+      const responses = [
+        `${contextInfo}, this question relates to the core concepts discussed in this section. The material suggests that understanding comes through careful analysis of the presented information and connecting it to broader themes.`,
+        `${contextInfo}, this is an excellent question that touches on key themes. The chapter provides evidence that supports multiple interpretations, encouraging readers to think critically about the implications.`,
+        `${contextInfo}, this question demonstrates deep engagement with the material. The author's approach in this chapter offers insights that can help frame your understanding of the broader topic.`
+      ]
+      
+      const response = responses[Math.floor(Math.random() * responses.length)]
+      
+      // Save to conversation history
+      const questionData = {
+        id: Date.now(),
+        question: questionText,
+        answer: response,
+        chapter: chapters[currentChapter]?.title,
+        chapterIndex: currentChapter,
+        book: selectedBook.title,
+        timestamp: new Date().toISOString()
+      }
+      
+      const existingQuestions = JSON.parse(localStorage.getItem('readmind_questions') || '[]')
+      localStorage.setItem('readmind_questions', JSON.stringify([questionData, ...existingQuestions]))
+      
+      setQuestionText('')
+      setShowQuestionModal(false)
+      
+      toast.success('Question answered! Check the Q&A section for your response.')
+      
+    } catch (error) {
+      console.error('Error processing question:', error)
+      toast.error('Failed to process question. Please try again.')
+    } finally {
+      setIsAskingQuestion(false)
+    }
+  }
+
+  const openQuestionModal = () => {
+    setShowQuestionModal(true)
+    setQuestionText('')
+  }
+
   }
 
   if (!selectedBook || chapters.length === 0) {
@@ -770,6 +830,120 @@ As we continue to advance AI technologies, it is essential that we maintain huma
             )}
           </AnimatePresence>
         </div>
+
+      {/* Floating Question Button */}
+      <motion.button
+        onClick={openQuestionModal}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-primary to-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <ApperIcon name="MessageSquarePlus" className="w-6 h-6" />
+      </motion.button>
+
+      {/* Question Modal */}
+      <AnimatePresence>
+        {showQuestionModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowQuestionModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-surface-800 rounded-2xl p-6 w-full max-w-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                    <ApperIcon name="MessageSquarePlus" className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-surface-800 dark:text-surface-100">
+                    Ask a Question
+                  </h3>
+                </div>
+                
+                <motion.button
+                  onClick={() => setShowQuestionModal(false)}
+                  className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <ApperIcon name="X" className="w-4 h-4 text-surface-500" />
+                </motion.button>
+              </div>
+              
+              <div className="mb-4">
+                <p className="text-sm text-surface-600 dark:text-surface-300 mb-2">
+                  Context: Chapter {currentChapter + 1} - "{chapters[currentChapter]?.title}"
+                </p>
+                <div className="p-3 bg-surface-100 dark:bg-surface-700 rounded-lg">
+                  <p className="text-xs text-surface-500">
+                    Ask questions about vocabulary, comprehension, analysis, or any concepts from this chapter.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <textarea
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  placeholder="What would you like to know about this chapter?"
+                  className="w-full px-4 py-3 bg-surface-100 dark:bg-surface-700 border border-surface-300 dark:border-surface-600 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                  rows={4}
+                  disabled={isAskingQuestion}
+                />
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-surface-400">
+                    {questionText.length}/500 characters
+                  </span>
+                  
+                  <div className="flex space-x-3">
+                    <motion.button
+                      onClick={() => setShowQuestionModal(false)}
+                      className="px-4 py-2 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Cancel
+                    </motion.button>
+                    
+                    <motion.button
+                      onClick={handleAskQuestion}
+                      disabled={!questionText.trim() || isAskingQuestion}
+                      className="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-lg hover:shadow-card transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {isAskingQuestion ? (
+                        <div className="flex items-center space-x-2">
+                          <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+                          <span>Asking...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <ApperIcon name="Send" className="w-4 h-4" />
+                          <span>Ask Question</span>
+                        </div>
+                      )}
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       </div>
     </div>
   )

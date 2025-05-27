@@ -5,6 +5,8 @@ import TextReader from './pages/TextReader'
 
 import Home from './pages/Home'
 import Profile from './pages/Profile'
+import AskQuestions from './pages/AskQuestions'
+
 import Library from './pages/Library'
 
 import ReadingGoals from './pages/ReadingGoals'
@@ -23,6 +25,8 @@ function App() {
           <Route path="/library" element={<Library />} />
 
           <Route path="/reading-goals" element={<ReadingGoals />} />
+          <Route path="/ask-questions" element={<AskQuestions />} />
+
 
         </Routes>
         <ToastContainer
