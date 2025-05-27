@@ -43,36 +43,49 @@ const Home = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <motion.div 
-              className="flex items-center space-x-3"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+          {[
+            { icon: 'BookOpen', title: 'Reading Goals', desc: 'Set and track reading targets', href: '/reading-goals' },
+            { icon: 'User', title: 'Profile', desc: 'Manage your reading profile', href: '/profile' },
+            { icon: 'Brain', title: 'AI Text Reader', desc: 'Interactive reading with AI summaries', href: '/text-reader' },
+            { icon: 'Target', title: 'Comprehension', desc: 'Test your understanding', href: '#' },
+            { icon: 'BookA', title: 'Vocabulary', desc: 'Build your word knowledge', href: '#' },
+            { icon: 'TrendingUp', title: 'Progress', desc: 'Track your improvements', href: '#' }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              className="group p-6 bg-white/60 dark:bg-surface-800/60 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-surface-700/20 hover:shadow-card transition-all duration-300"
+              whileHover={{ scale: 1.02, y: -4 }}
+              transition={{ duration: 0.2 }}
             >
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-                <ApperIcon name="BookOpen" className="w-5 h-5 md:w-6 md:h-6 text-white" />
-              </div>
-              <span className="text-xl md:text-2xl font-bold text-gradient">ReadMind</span>
-            </motion.div>
-            
-            <div className="flex items-center space-x-6">
-              <Link to="/profile" className="px-4 py-2 text-surface-600 dark:text-surface-300 hover:text-primary transition-colors font-medium">
-                Profile
-              </Link>
-              <Link to="/reading-goals" className="px-4 py-2 text-surface-600 dark:text-surface-300 hover:text-primary transition-colors font-medium">
-                Reading Goals
-              </Link>
-              <motion.button
-                onClick={toggleDarkMode}
-                className="p-2 md:p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <Link 
+                to={feature.href}
+                className="block"
+                onClick={() => {
+                  if (feature.href !== '#') {
+                    toast.success(`Opening ${feature.title}...`, {
+                      position: "top-right",
+                      autoClose: 1500,
+                    })
+                  } else {
+                    toast.info(`${feature.title} coming soon!`, {
+                      position: "top-right",
+                      autoClose: 2000,
+                    })
+                  }
+                }}
               >
-                <ApperIcon name={darkMode ? 'Sun' : 'Moon'} className="w-5 h-5 md:w-6 md:h-6 text-surface-700 dark:text-surface-300" />
-              </motion.button>
-            </div>
-
-        </div>
-          </div>
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <ApperIcon name={feature.icon} className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-surface-800 dark:text-surface-100 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-surface-600 dark:text-surface-300">
+                  {feature.desc}
+                </p>
+              </Link>
+            </motion.div>
+          ))}
 
       </nav>
 
